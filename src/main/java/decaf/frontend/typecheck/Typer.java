@@ -334,11 +334,9 @@ public class Typer extends Phase<Tree.TopLevel, Tree.TopLevel> implements TypeLi
     @Override
     public void visitVarSel(Tree.VarSel expr, ScopeStack ctx) {
         if (expr.receiver.isEmpty()) {
-            Log.info(expr.toString() + "this is a expr!");
             // Variable, which should be complicated since a legal variable could refer to a local var,
             // a visible member var, and a class name.
             var symbol = ctx.lookupBefore(expr.name, localVarDefPos.orElse(expr.pos));
-            Log.info(symbol.toString());
             if (symbol.isPresent()) {
                 if (symbol.get().isVarSymbol()) {
                     var var = (VarSymbol) symbol.get();
@@ -582,4 +580,10 @@ public class Typer extends Phase<Tree.TopLevel, Tree.TopLevel> implements TypeLi
 
     // Only usage: check if an initializer cyclically refers to the declared variable, e.g. var x = x + 1
     private Optional<Pos> localVarDefPos = Optional.empty();
+
+    @Override
+    public void visitLambda(Tree.Lambda lambda, ScopeStack ctx) {
+        return;
+    }
+
 }

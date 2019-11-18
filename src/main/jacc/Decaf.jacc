@@ -26,6 +26,7 @@ import java.util.Optional;
 %token '+'  '-'  '*'  '/'  '%'  '='  '>'  '<'  '.'
 %token ','  ';'  '!'  '('  ')'  '['  ']'  '{'  '}'
 
+%left ARROW
 %left OR
 %left AND
 %left EQUAL NOT_EQUAL
@@ -390,6 +391,14 @@ Expr            :   Literal
                 |   '(' CLASS Id ')' Expr   %prec CAST
                     {
                         $$ = svExpr(new ClassCast($5.expr, $3.id, $5.expr.pos));
+                    }
+                |   FUN '(' VarList ')' ARROW Expr
+                    {
+                        $$ = svExpr(new Lambda(BinaryOp.ARROW ,$3.varList, $6.expr, $1.pos));
+                    }
+                |   FUN '(' VarList ')' Block
+                    {
+                        $$ = svExpr(new Lambda($3.varList, $5.block, $1.pos));
                     }
                 ;
 
